@@ -1,5 +1,5 @@
 // 1.写一个正则表达式 匹配所有 Number 直接量
-const numberLiteralRegExp = /(^-?\d*\.?\d*$)|(0^[0-7]+$)|(^0[Bb]?[01]+$)|(^0[oO]?[0-7]+$)|(^0[xX]?[0-9a-fA-F]+$)|(^-?\d*\.?\d*e\d+$)/g;
+const numberLiteralRegExp = /(^-?\(0|[1-9]+[0-9]*)\.?\d*(?:e[+-]\d+)$)|(0^[0-7]+$)|(^0[Bb]?[01]+$)|(^0[oO]?[0-7]+$)|(^0[xX]?[0-9a-fA-F]+$)/g;
 
 // 2.写一个 UTF-8 Encoding 的函数
 var stringFromCharCode = String.fromCharCode;
