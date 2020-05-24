@@ -24,3 +24,40 @@
 
 2.绘制DOM
 
+## 2.重学CSS
+
+1.CSS总体结构
+
+- @charset
+- @import
+- rules
+  - @media
+  - @page
+  - rule 
+
+2.CSS @rule 的研究
+
+- @charset
+- @import
+- @media
+- @page
+- @counter-style
+- @keyframes
+- @font-face
+- @supports
+- @namespace
+
+3.推荐使用vw解决兼容性问题
+
+http://www.html-js.com/article/2402
+
+4.CSS 规则
+
+- Selector
+- Key
+  - Properties
+  - varible
+- Value
+
+## 3.建立CSS知识体系
+
