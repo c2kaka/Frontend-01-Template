@@ -7,26 +7,16 @@ const server = http.createServer((req, res) => {
 	res.setHeader('X-Foo', 'bar');
 	res.writeHead(200, { 'Content-Type': 'text/plain' });
 
-	const html = `<html maaa=a >
-<head>
-    <style>
-        body div #myid{
-            width:100px;
-            background-color: #ff5000;
-        }
-        body div img {
-            width: 30px;
-            background-color: #ff1111;
-        }
-    </style>
-</head>
-<body>
-    <div>
-        <img id="myid"/>
-        <img />
-    </div>
-</body>
-</html>`;
+	const html = `<style>
+    div {
+        border:solid 1px black
+    }
+</style>
+<div style="align-items:center;display:inline-flex;width:500px;justify-content:space-around;">
+    <div  style="flex:1;width:100px;height:70px;"></div>
+    <div  style="width:200px;height:50px;"></div>
+    <div  style="width:200px;height:100px;"></div>
+</div>`;
 	res.end(html);
 });
 

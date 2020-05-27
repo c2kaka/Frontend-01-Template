@@ -2,6 +2,9 @@
 const css = require('css');
 
 const EOF = Symbol('EOF');
+
+const layout = require('./layout.js');
+
 let currentToken;
 let currentAttribute;
 let currentTextNode;
@@ -118,9 +121,11 @@ function computeCSS(element) {
 						sp
 					) < 0
 				) {
-					computedStyle[declaration.property].specificity = sp;
-					computedStyle[declaration.property].value =
-						declaration.value;
+					for (let k = 0; k < 4; k++) {
+						computedStyle[declaration.property][declaration.value][
+							k
+						] += sp[k];
+					}
 				}
 			}
 			console.log(element.computedStyle);
@@ -167,6 +172,7 @@ function emit(token) {
 			if (top.tagName === 'style') {
 				addCSSRules(top.children[0].content);
 			}
+			layout(top);
 			stack.pop();
 		}
 		currentTextNode = null;
