@@ -209,6 +209,93 @@ function layout(element) {
 	} else {
 		flexLine.crossSpace = crossSpace;
 	}
+
+	if (mainSpace < 0) {
+		// overflow(happens only if container is single line),scale every item
+		let scale = style[mainSize] / (style[mainSize] - mainSpace);
+		var currentMain = mainBase;
+		for (let i = 0; i < items.length; i++) {
+			let item = items[i];
+			let itemStyle = getStyle(item);
+
+			if (itemStyle.flex) {
+				itemStyle[mainSize] = 0;
+			}
+
+			itemStyle[mainSize] = itemStyle[mainSize] * scale;
+
+			itemStyle[mainStart] = currentMain;
+			itemStyle[mainEnd] =
+				itemStyle[mainStart] + mainSign * itemStyle[mainSize];
+			currentMain = itemStyle[mainEnd];
+		}
+	} else {
+		// process each flex line
+		flexLines.forEach((items) => {
+			let mainSpace = item.mainSpace;
+			let flexTotal = 0;
+			for (let i = 0; i < items.length; i++) {
+				let item = items[i];
+				let itemStyle = getStyle(item);
+
+				if (itemStyle.flex !== null && itemStyle.flex !== void 0) {
+					flexTotal += itemStyle.flex;
+					continue;
+				}
+			}
+
+			if (flexTotal > 0) {
+				// there is flexible flex items
+				let currentMain = mainBase;
+
+				for (let i = 0; i < items.length; i++) {
+					let item = items[i];
+					let itemStyle = getStyle(item);
+
+					if (itemStyle.flex) {
+						itemStyle[mainSize] =
+							(mainSpace / flexTotal) * itemStyle.flex;
+					}
+					itemStyle[mainStart] = currentMain;
+					itemStyle[mainEnd] =
+						itemStyle[mainStart] + mainSign * itemStyle[mainSize];
+
+					currentMain = itemStyle[mainEnd];
+				}
+			} else {
+				// there is no flexible flex items, which means justifyContent should work
+				if (style.justifyContent === 'flex-start') {
+					let currentMain = mainBase;
+					let step = 0;
+				}
+				if (style.justifyContent === 'flex-end') {
+					let currentMain = mainSpace * mainSign + mainBase;
+					let step = 0;
+				}
+				if (style.justifyContent === 'center') {
+					let currentMain = (mainSpace / 2) * mainSign + mainBase;
+					let step = 0;
+				}
+				if (style.justifyContent === 'space-between') {
+					let step =
+						(mainBase / (items.length - 1)) * mainSign + mainBase;
+					let currentMain = mainBase;
+				}
+				if (style.justifyContent === 'space-around') {
+					let step = (mainBase / items.length) * mainSign + mainBase;
+					let currentMain = step / 2 + mainBase;
+				}
+				for (let i = 0; i < items.length; i++) {
+					let item = items[i];
+					let itemStyle = getStyle(item);
+					itemStyle[mainStart] = mainBase;
+					itemStyle[mainEnd] =
+						itemStyle[mainStart] + mainSign * itemStyle[mainSize];
+					currentMain = itemStyle[mainEnd] + step;
+				}
+			}
+		});
+	}
 }
 
 module.exports = layout;
