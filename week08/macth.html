@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div>
+    <div class="class" id="id"></div>
+  </div>
+
+  <script>
+    function match(selector, element) {
+      const regex = /^([a-z]+)?(#[a-z]+)?(\.[a-z]+)?(\[[a-z]+=[a-z]+\])?$/;
+      const lastSelector = selector.split(' ').slice(-1);
+
+      const res = regex.exec(lastSelector);
+      console.log(res);
+      if (!res) {
+        return false;
+      }
+
+      const [, type, id, cls, attr] = res;
+      let isMatched;
+      if (type) {
+        isMatched = type.toUpperCase() === element.tagName;
+      }
+
+      if (id) {
+        isMatched = id.slice(1) === element.id;
+      }
+
+      if (cls) {
+        isMatched = [...element.classList].includes(cls.slice(1));
+      }
+
+      if (attr) {
+        const [, key, value] = /^\[([a-z]+)=([a-z]+)\]$/.exec(attr);
+        isMatched = element.getAttribute(key) === value;
+      }
+
+      return isMatched;
+    }
+
+    console.log(match('div #id.class', document.getElementById('id')));
+  </script>
+</body>
+</html>
