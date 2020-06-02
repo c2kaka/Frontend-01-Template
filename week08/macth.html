@@ -12,11 +12,38 @@
 
   <script>
     function match(selector, element) {
-      const regex = /^([a-z]+)?(#[a-z]+)?(\.[a-z]+)?(\[[a-z]+=[a-z]+\])?$/;
-      const lastSelector = selector.split(' ').slice(-1);
+      if (selector === '*') {
+        return true;
+      }
 
-      const res = regex.exec(lastSelector);
-      console.log(res);
+      const selectorArray = selector.split(' ');
+
+      if (selectorArray.length === 0) {
+        return false;
+      }
+
+      if (selectorArray.length === 1) {
+        return matchSingleElement(selector, element);
+      }
+
+      let ele = element;
+      while (selectorArray.length && ele) {
+        if (matchSingleElement(selectorArray[selectorArray.length - 1], ele)) {
+          selectorArray.pop();
+        }
+        
+        ele = ele.parentNode;
+      }
+
+      return !selectorArray.length;
+    }
+
+    function matchSingleElement(selector, element) {
+      const regex = /^([a-z]+)?(#[a-z]+)?(\.[a-z]+)?(\[[a-z]+=[a-z]+\])?$/;
+      // const lastSelector = selector.split(' ').slice(-1);
+
+      const res = regex.exec(selector);
+      // console.log(res);
       if (!res) {
         return false;
       }
