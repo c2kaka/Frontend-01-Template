@@ -7,7 +7,7 @@
 </head>
 <body>
   <div>
-    <div class="class" id="id"></div>
+    <div class="class classes" id="id"></div>
   </div>
 
   <script>
@@ -39,11 +39,11 @@
     }
 
     function matchSingleElement(selector, element) {
-      const regex = /^([a-z]+)?(#[a-z]+)?(\.[a-z]+)?(\[[a-z]+=[a-z]+\])?$/;
+      const regex = /^([a-z]+)?(#[a-z]+)?(\.[a-z]+)*(\[[a-z]+=[a-z]+\])*$/;
       // const lastSelector = selector.split(' ').slice(-1);
 
       const res = regex.exec(selector);
-      // console.log(res);
+      console.log(res);
       if (!res) {
         return false;
       }
@@ -70,7 +70,7 @@
       return isMatched;
     }
 
-    console.log(match('div #id.class', document.getElementById('id')));
+    console.log(match('div #id.class.classes', document.getElementById('id')));
   </script>
 </body>
 </html>
