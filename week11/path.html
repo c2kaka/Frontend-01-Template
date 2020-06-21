@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .container {
+            width: 701px;
+            font-size: 0;
+        }
+
+        .cell {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: gray;
+            border-bottom: 1px solid white;
+            border-right: 1px solid white;
+            vertical-align: middle;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="container" class="container"></div>
+    <button id="save">save</button>
+
+    <script>
+        var map = localStorage.map ? JSON.parse(localStorage.map) : new Array(10000).fill(0);
+        function show() {
+            let container = document.getElementById('container');
+
+            for(let i = 0; i < 100; i++) {
+                for(let j = 0; j < 100; j++) {
+                    let cell = document.createElement('div');
+                    cell.classList.add('cell');
+
+                    if (map[i*100 + j] === 1) {
+                        cell.style.background = 'black';
+                    }
+
+                    cell.addEventListener('mouseover', () => {
+                        if (mouse) {
+                           if (clear) {
+                            cell.style.background = '';
+                            map[i*100 + j] = 0;
+                           } else {
+                            cell.style.background = 'black';
+                            map[i*100 + j] = 1;
+                           }
+                        }
+                    });
+
+                    container.appendChild(cell);
+                }
+            }
+        }
+
+        let mouse = false;
+        let clear = false;
+
+        document.addEventListener('mousedown', (e) => {
+            mouse = true;
+            clear = e.button === 2;
+        });
+        document.addEventListener('mouseup', () => mouse = false);
+        document.addEventListener('contextmenu', e => e.preventDefault())
+
+        document.getElementById('save').addEventListener('click', () => {
+            localStorage.map = JSON.stringify(map);
+        });
+
+        show();
+    </script>
+</body>
+</html>
