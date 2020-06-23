@@ -99,10 +99,10 @@
         }
 
         async function findPath(pointMap, start, end) {
-            let map = pointMap.slice();
+            let map = Object.create(pointMap);
 
             function distance([x, y]) {
-                return (x - end[0]) ** 2 - (y - end[1]) ** 2;
+                return (x - end[0]) ** 2 + (y - end[1]) ** 2;
             }
 
             let collection = new Sorted([start], (a, b) => distance(a) - distance(b));
