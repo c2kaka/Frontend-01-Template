@@ -40,7 +40,7 @@
 
   let source = [];
 
-  for (const token of tokenize('10 * 25')) {
+  for (const token of tokenize('5 + 10 * 25')) {
     if (token.type !== 'Whitespace' && token.type !== 'LineTerminator') {
        source.push(token);
     }
@@ -50,13 +50,56 @@
   }
 
   function AddictiveExpression(source) {
+    if (source[0].type === 'Number') {
+      MultiplicativeExpression(source);
+      return AddictiveExpression(source);
+    }
+
+    if (source[0].type === 'MultiplicativeExpression') {
+      let node = {
+        type: 'AddictiveExpression',
+        children: [source.shift()]
+      };
+      source.unshift(node);
+      return AddictiveExpression(source);
+    }
+
+    if (source[0].type === 'AddictiveExpression' &&
+        source.length > 1 && source[1].type === '+') {
+          let node = {
+            type: 'AddictiveExpression',
+            children: [source.shift(), source.shift()]
+          };
+
+          MultiplicativeExpression(source);
+          node.children.push(source.shift());
+          source.unshift(node);
+          return AddictiveExpression(source);
+    }
+
+    if (source[0].type === 'AddictiveExpression' &&
+        source.length > 1 && source[1].type === '-') {
+          let node = {
+            type: 'AddictiveExpression',
+            children: [source.shift(), source.shift()]
+          };
+
+          MultiplicativeExpression(source);
+          node.children.push(source.shift());
+          source.unshift(node);
+          return AddictiveExpression(source);
+    }
+
+    if (source[0].type === 'AddictiveExpression') {
+      return source[0];
+    }
   }
 
   function MultiplicativeExpression(source) {
     if (source[0].type === 'Number') {
       let node = {
         type: 'MultiplicativeExpression',
-        children: source.shift()
+        children: [source.shift()]
       };
       source.unshift(node);
       return MultiplicativeExpression(source);
@@ -90,6 +133,6 @@
   }
 
   MultiplicativeExpression(source);
-  console.log(MultiplicativeExpression(source));
+  console.log(AddictiveExpression(source));
 
 </script>
