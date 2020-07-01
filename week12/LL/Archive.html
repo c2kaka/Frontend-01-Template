@@ -46,7 +46,19 @@
     }
   }
 
-  function Expression(tokens) {
+  function Expression(source) {
+    if (source[0].type === 'AddictiveExpression' && source[1].type === 'EOF') {
+      let node = {
+        type: 'Expression',
+        children: [source.shift(), source.shift()]
+      };
+
+      source.unshift(node);
+      return node;
+    }
+
+    AddictiveExpression(source);
+    return Expression(source);
   }
 
   function AddictiveExpression(source) {
@@ -133,6 +145,6 @@
   }
 
   MultiplicativeExpression(source);
-  console.log(AddictiveExpression(source));
+  console.log(Expression(source));
 
 </script>
