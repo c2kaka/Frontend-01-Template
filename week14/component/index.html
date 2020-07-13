@@ -55,9 +55,15 @@
 
         let nextPic = () => {
           setTimeout(() => {
+            let nextPosition = (position + 1) % this.data.length;
+
             let current = this.root.childNodes[position];
-            current.style.transform = `translateX(${-100 * position}%)`;
-            position = (position + 1) % this.data.length;
+            let next = this.root.childNodes[nextPosition];
+
+            current.style.transform = `translateX(${-100 - 100 * position}%)`;
+            next.style.transform = `translateX(${-100 * nextPosition}%)`;
+
+            position = nextPosition;
             nextPic();
           }, 3000)
         }
