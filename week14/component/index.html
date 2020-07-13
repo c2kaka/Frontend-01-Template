@@ -12,11 +12,13 @@
       white-space: nowrap;
       outline: 1px solid blue;
       overflow: hidden;
+      margin: 0 auto;
     }
 
     .carousel>img {
       width: 500px;
       height: 300px;
+      transition: all ease 1s;
       /* display: inline-block; */
     }
   </style>
@@ -54,21 +56,32 @@
         let position = 0;
 
         let nextPic = () => {
-          setTimeout(() => {
-            let nextPosition = (position + 1) % this.data.length;
+          let nextPosition = (position + 1) % this.data.length;
 
-            let current = this.root.childNodes[position];
-            let next = this.root.childNodes[nextPosition];
+          let current = this.root.childNodes[position];
+          let next = this.root.childNodes[nextPosition];
 
-            current.style.transform = `translateX(${-100 - 100 * position}%)`;
-            next.style.transform = `translateX(${-100 * nextPosition}%)`;
+          current.style.transition = 'ease 0s';
+          next.style.transition = 'ease 0s';
 
-            position = nextPosition;
-            nextPic();
-          }, 3000)
+          current.style.transform = `translateX(${- 100 * position}%)`;
+          next.style.transform = `translateX(${100 - 100 * nextPosition}%)`;
+
+          requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+              current.style.transition = '';
+              next.style.transition = '';
+
+              current.style.transform = `translateX(${-100 - 100 * position}%)`;
+              next.style.transform = `translateX(${-100 * nextPosition}%)`;
+              position = nextPosition;
+            })
+          });
+
+          setTimeout(nextPic, 3000);
         }
 
-        nextPic();
+        setTimeout(nextPic, 3000);
       }
     }
 
