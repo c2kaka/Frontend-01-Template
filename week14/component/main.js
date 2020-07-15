@@ -61,8 +61,69 @@ class Carousel {
 
 			setTimeout(nextPic, 3000);
 		};
-
 		setTimeout(nextPic, 3000);
+
+		root.addEventListener('mousedown', (event) => {
+			let startX = event.clientX;
+			let startY = event.clientY;
+
+			const length = this.data.length;
+			let lastPosition = (position - 1 + length) % length;
+			let nextPosition = (position + 1) % length;
+
+			let last = children[lastPosition];
+			let current = children[position];
+			let next = children[nextPosition];
+
+			let move = (event) => {
+				last.style.transition = 'ease 0s';
+				current.style.transition = 'ease 0s';
+				next.style.transition = 'ease 0s';
+
+				last.style.transform = `translateX(${
+					event.clientX - startX - 500 - 500 * lastPosition
+				}px)`;
+				current.style.transform = `translateX(${
+					event.clientX - startX - 500 * position
+				}px)`;
+				next.style.transform = `translateX(${
+					event.clientX - startX + 500 - 500 * nextPosition
+				}px)`;
+			};
+
+			let up = (event) => {
+				let offset = 0;
+				if (event.clientX - startX > 250) {
+					offset = 1;
+				} else if (event.clientX - startX < -250) {
+					offset = -1;
+				}
+
+				last.style.transition = '';
+				current.style.transition = '';
+				next.style.transition = '';
+
+				last.style.transform = `translateX(${
+					offset * 500 - 500 - 500 * lastPosition
+				}px)`;
+				current.style.transform = `translateX(${
+					offset * 500 - 500 * position
+				}px)`;
+				next.style.transform = `translateX(${
+					offset * 500 + 500 - 500 * nextPosition
+				}px)`;
+
+				position =
+					(position - offset + this.data.length) % this.data.length;
+
+				document.removeEventListener('mousemove', move);
+				document.removeEventListener('mouseup', up);
+			};
+
+			document.addEventListener('mousemove', move);
+			document.addEventListener('mouseup', up);
+		});
+
 		return root;
 	}
 
