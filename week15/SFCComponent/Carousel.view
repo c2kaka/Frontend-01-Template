@@ -1,0 +1,11 @@
+<template>
+    <div>carousel</div>
+</template>
+
+<script>
+export default {
+    data() {
+        console.log('data');
+    }
+}
+</script>
