@@ -4,15 +4,63 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <style>
+     #el {
+        width:100px;
+        height:100px;
+        background-color:skyblue;
+    }
+    #el2 {
+        width:100px;
+        height:100px;
+        background-color:skyblue;
+        transition:transform ease 2s;
+    }
+  </style>
 </head>
 <body>
-  
+  <div id="el"></div>
+  <div id="el2"></div>
+  <button id="btnStart">start</button>
+  <button id="btnPause">pause</button>
+  <button id="btnResume">resume</button>
 </body>
 </html>
 
 <script type="module">
-  import {Timeline} from './animation.js';
+  import {Timeline, Animation} from './animation.js';
+  import {cubicBezier} from "./cubicBezier.js";
 
+  let linear = t => t;
+  let ease = cubicBezier(.25,.1,.25,1);
+
+  let el = document.getElementById("el")
   let tml = new Timeline();
-  tml.start();
+
+  const config = {
+    object: el.style,
+    property: 'transform',
+    template: v => `translateX(${v}px)`,
+    start: 0,
+    end: 200,
+    duration: 5000,
+    delay: 0,
+    timingFunction: ease
+  };
+  
+  tml.add(new Animation(config));
+
+  document.getElementById('btnStart').addEventListener('click', () => {
+    tml.start();
+  }, {once: true});
+
+  document.getElementById('btnPause').addEventListener('click', () => {
+    tml.pause();
+  });
+
+  document.getElementById('btnResume').addEventListener('click', () => {
+    tml.resume();
+  });
+
+  // document.getElementById("el2").style.transform = "translateX(200px)";
 </script>
