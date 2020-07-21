@@ -23,12 +23,13 @@
   <button id="btnStart">start</button>
   <button id="btnPause">pause</button>
   <button id="btnResume">resume</button>
+  <button id="changeColor">changeColor</button>
   <button id="el2-start">el2-start</button>
 </body>
 </html>
 
 <script type="module">
-  import {Timeline, Animation} from './animation.js';
+  import {Timeline, Animation, ColorAnimation} from './animation.js';
   import {cubicBezier} from "./cubicBezier.js";
 
   let linear = t => t;
@@ -50,19 +51,29 @@
   };
 
   const config2 = {
-    object: el2.style,
-    property: 'transform',
-    template: v => `translateX(${v}px)`,
-    start: 0,
-    end: 200,
+    object: el.style,
+    property: 'backgroundColor',
+    template: null,
+    start: {
+      r: 122,
+      g: 22,
+      b: 222,
+      a: 1
+    },
+    end: {
+      r: 255,
+      g: 255,
+      b: 255,
+      a: 1
+    },
     duration: 5000,
     delay: 0,
     timingFunction: ease
   };
   
-  tml.add(new Animation(config));
 
   document.getElementById('btnStart').addEventListener('click', () => {
+    tml.add(new Animation(config));
     tml.start();
   }, {once: true});
 
@@ -74,10 +85,16 @@
     tml.resume();
   });
 
-  document.getElementById('el2-start').addEventListener('click', () => {
-    tml.add(new Animation(config2), 0);
+  document.getElementById('changeColor').addEventListener('click', () => {
+    tml.add(new ColorAnimation(config2));
     tml.start();
   });
+  
+
+  // document.getElementById('el2-start').addEventListener('click', () => {
+  //   tml.add(new Animation(config2), 0);
+  //   tml.start();
+  // });
 
   // document.getElementById("el2").style.transform = "translateX(200px)";
 </script>

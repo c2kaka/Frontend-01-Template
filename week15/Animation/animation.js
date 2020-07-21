@@ -13,7 +13,7 @@ export class Timeline {
 
     this.animations = this.animations.filter(animation => !animation.finished);
     for (let animation of this.animations) {
-      let {object, property, template, start, end, duration, delay, timingFunction, addTime} = animation;
+      let {object, property, template, start, end, duration, delay, timingFunction, addTime, valueFromProgression} = animation;
 
       let progression = timingFunction((t - delay - addTime)/duration);
 
@@ -22,7 +22,8 @@ export class Timeline {
         animation.finished = true;
       }
 
-      let value = start + progression * (end - start);
+      // let value = start + progression * (end - start);
+      let value = valueFromProgression(progression);
 
       object[property] = template(value);
     }
@@ -94,4 +95,33 @@ export class Animation {
     this.finished = false;
     this.timingFunction = config.timingFunction;
   }
+
+  valueFromProgression = (progression) => {
+    return this.start + progression * (this.end - this.start);
+  }
 }
+
+export class ColorAnimation {
+			constructor(config) {
+				this.object = config.object;
+				this.property = config.property;
+				this.template =
+					config.template ||
+					((v) => `rgba(${v.r}, ${v.g}, ${v.b}, ${v.a})`);
+				this.start = config.start;
+				this.end = config.end;
+				this.duration = config.duration;
+				this.delay = config.delay;
+				this.finished = false;
+				this.timingFunction = config.timingFunction;
+			}
+
+			valueFromProgression = (progression) => {
+				return {
+					r: this.start.r + progression * (this.end.r - this.start.r),
+					g: this.start.g + progression * (this.end.g - this.start.g),
+					b: this.start.b + progression * (this.end.b - this.start.b),
+					a: this.start.a + progression * (this.end.a - this.start.a),
+				};
+			};
+		}
