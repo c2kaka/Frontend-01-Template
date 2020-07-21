@@ -14,7 +14,6 @@
         width:100px;
         height:100px;
         background-color:skyblue;
-        transition:transform ease 2s;
     }
   </style>
 </head>
@@ -24,6 +23,7 @@
   <button id="btnStart">start</button>
   <button id="btnPause">pause</button>
   <button id="btnResume">resume</button>
+  <button id="el2-start">el2-start</button>
 </body>
 </html>
 
@@ -35,10 +35,22 @@
   let ease = cubicBezier(.25,.1,.25,1);
 
   let el = document.getElementById("el")
+  let el2 = document.getElementById('el2');
   let tml = new Timeline();
 
   const config = {
     object: el.style,
+    property: 'transform',
+    template: v => `translateX(${v}px)`,
+    start: 0,
+    end: 200,
+    duration: 5000,
+    delay: 0,
+    timingFunction: ease
+  };
+
+  const config2 = {
+    object: el2.style,
     property: 'transform',
     template: v => `translateX(${v}px)`,
     start: 0,
@@ -60,6 +72,11 @@
 
   document.getElementById('btnResume').addEventListener('click', () => {
     tml.resume();
+  });
+
+  document.getElementById('el2-start').addEventListener('click', () => {
+    tml.add(new Animation(config2), 0);
+    tml.start();
   });
 
   // document.getElementById("el2").style.transform = "translateX(200px)";
