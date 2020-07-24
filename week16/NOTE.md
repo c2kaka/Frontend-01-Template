@@ -1,1 +1,5 @@
-# 每周总结可以写在这里
+# 手势
+1.Tap
+2.Pan
+3.Flick Swipe
+4.Press
