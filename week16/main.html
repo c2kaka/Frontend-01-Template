@@ -5,15 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <style>
-    #container {
-      height: 100vh;
-      width: 100vh;
+    #box {
+      height: 100px;
+      width: 100px;
       background-color: aqua;
     }
   </style>
 </head>
 <body>
-  <div id="container"></div>
+  <div id="box" style="transform: translate(0, 0);"></div>
 </body>
 <script src="./gesture.js"></script>
+<script>
+  let x = 0;
+  let y = 0;
+
+  let box = document.getElementById('box');
+  enableGesture(box);
+
+  box.addEventListener('pan', e => {
+    console.log('pan');
+    let destinationX = x + event.clientX - event.startX;
+    let destinationY = y + event.clientY - event.startY;
+    console.log(destinationX, destinationY, `translate(${destinationX}px, ${destinationY}px)`);
+    box.style.transform = `translate(${destinationX}px, ${destinationY}px)`;
+  });
+
+  box.addEventListener('paned', e => {
+    x = x + event.clientX - event.startX;
+    y = y + event.clientY - event.startY;
+  });
+</script>
 </html>
