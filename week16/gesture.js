@@ -3,22 +3,24 @@ function enableGesture(element) {
 
   let MOUSE_SYMBOL = Symbol('mouse');
 
-  element.addEventListener('mousedown', e => {
-    contexts[MOUSE_SYMBOL] = Object.create(null);
-    start(e, contexts[MOUSE_SYMBOL]);
-    let mouseMove = e => {
-      move(e, contexts[MOUSE_SYMBOL]);
-    };
-
-    let mouseEnd = e => {
-      end(e, contexts[MOUSE_SYMBOL]);
-      document.removeEventListener('mousemove', mouseMove);
-      document.removeEventListener('mouseup', mouseEnd);
-    }
-
-    document.addEventListener('mousemove', mouseMove);
-    document.addEventListener('mouseup', mouseEnd);
-  });
+  if (element.ontouchstart !== null) {
+    element.addEventListener('mousedown', e => {
+      contexts[MOUSE_SYMBOL] = Object.create(null);
+      start(e, contexts[MOUSE_SYMBOL]);
+      let mouseMove = e => {
+        move(e, contexts[MOUSE_SYMBOL]);
+      };
+  
+      let mouseEnd = e => {
+        end(e, contexts[MOUSE_SYMBOL]);
+        document.removeEventListener('mousemove', mouseMove);
+        document.removeEventListener('mouseup', mouseEnd);
+      }
+  
+      document.addEventListener('mousemove', mouseMove);
+      document.addEventListener('mouseup', mouseEnd);
+    });
+  }
 
   element.addEventListener('touchstart', (e) => {
     for (let touch of e.changedTouches) {
