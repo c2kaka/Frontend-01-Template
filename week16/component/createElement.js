@@ -1,14 +1,13 @@
-import { enableGesture } from './gesture';
+import { enableGesture } from "./gesture";
 
-export function createElement (Cls, attributes, ...children) {
-    // console.log(arguments);
+export function createElement(Cls, attributes, ...children) {
     let o;
-    
+
     if (typeof Cls === 'string') {
         o = new Wrapper(Cls);
     } else {
         o = new Cls({
-            timer: null
+            timer: {},
         });
     }
 
@@ -16,57 +15,49 @@ export function createElement (Cls, attributes, ...children) {
         o.setAttribute(name, attributes[name]);
     }
 
-    // console.log(children);
-    let visit = (children) => {
+    let visit = children => {
         for (let child of children) {
-            
-            if (child instanceof Array) {
+            if (typeof child === 'object' && child instanceof Array) {
                 visit(child);
                 continue;
             }
 
-            if (typeof child === 'string') {
+            if (typeof child === 'string')
                 child = new Text(child);
-            }
 
             o.appendChild(child);
         }
     }
-    
-    visit(children);
 
+    visit(children);
+    // console.log(o);
     return o;
 }
 
 export class Text {
-    constructor (text) {
+    constructor(text) {
         this.root = document.createTextNode(text);
     }
-
-    mountTo (parent) {
+    mountTo(parent) {
         parent.appendChild(this.root);
     }
 }
 
 export class Wrapper {
-    constructor (type) {  // config
-        // console.log('Parent::config', config);
+    constructor(type) {
         this.children = [];
         this.root = document.createElement(type);
     }
 
-    // set className (v) { // property
-    //     console.log('Parent::className', v);
-    // }
-
-    setAttribute (name, value) {    // attribute
-        // console.log('Parent::setAttribute', name, value);
+    setAttribute(name, value) {
+        //attribute
         this.root.setAttribute(name, value);
-
+        
         if (name.match(/^on([\s\S]+)$/)) {
-            let eventName = RegExp.$1.replace(/^[\s\S]/, c => c.toLowerCase());
-            console.log(eventName);
-            this.addEventListener(eventName, value)
+            // console.log(RegExp.$1);
+            const eventName = RegExp.$1.replace(/^[\s\S]/, c => c.toLowerCase());
+            // console.log(eventName);
+            this.addEventListener(eventName, value);
         }
 
         if (name === 'enableGesture') {
@@ -74,23 +65,23 @@ export class Wrapper {
         }
     }
 
-    appendChild (child) {   // children
-        // console.log('Parent::appendChild', child);
+    appendChild(child) {
         this.children.push(child);
-        // child.mountTo(this.root);    // 这里不要直接 moute
     }
 
-    addEventListener () {
+    addEventListener() {
         this.root.addEventListener(...arguments);
     }
 
-    get style () {
+    get style() {
         return this.root.style;
     }
 
-    mountTo (parent) {
+    mountTo(parent) {
         parent.appendChild(this.root);
+
         for (let child of this.children) {
+            // console.log('child', child);
             if (typeof child === 'string') {
                 child = new Text(child);
             }
