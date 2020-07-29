@@ -1,4 +1,5 @@
 import { enableGesture } from "./gesture";
+import * as _ from 'underscore';
 
 export function createElement(Cls, attributes, ...children) {
     let o;
@@ -58,7 +59,9 @@ export class Wrapper {
             // console.log(RegExp.$1);
             const eventName = RegExp.$1.replace(/^[\s\S]/, c => c.toLowerCase());
             // console.log(eventName);
-            this.addEventListener(eventName, value);
+
+            let func = _.debounce(value, 50, true);
+            this.addEventListener(eventName, func);
         }
 
         if (name = 'enableGesture') {

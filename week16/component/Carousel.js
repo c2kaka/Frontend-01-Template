@@ -118,7 +118,7 @@ export class Carousel {
         const length = this.data.length;
         position = (position - direction + length) % length;
         //FIXME:触发了多次panend事件，调用多次nextPic函数，由于Position是全局变量，导致动画错误
-        // nextPicStopHandler = setTimeout(nextPic, 8000);
+        nextPicStopHandler = setTimeout(nextPic, 3000);
       }
 
       let element = <img src={url} onStart={onStart} onPan={onPan} onPanend={onPanend} enableGesture={true}/>;
