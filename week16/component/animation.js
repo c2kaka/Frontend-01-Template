@@ -10,10 +10,7 @@ export class Timeline {
 
   tick() {
     let t = Date.now() - this.startTime;
-    // console.log(t);
 
-    // this.animations = this.animations.filter(animation => !animation.finished);
-    console.log(this.animations);
     for (let animation of this.animations) {
       let {object, property, template, start, end, duration, delay, timingFunction, addTime, valueFromProgression} = animation;
 

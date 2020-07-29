@@ -56,6 +56,7 @@ export function enableGesture(element) {
     context.isTap = true;
     context.isPan = false;
     context.isPress = false;
+    element.dispatchEvent(new CustomEvent('start', {}));
 
     context.timeoutHandler = setTimeout(() => {
       if (context.isPan) {
