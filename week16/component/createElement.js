@@ -1,14 +1,14 @@
-import { enableGesture } from "./gesture";
-import * as _ from 'underscore';
+import { enableGesture } from './gesture';
 
-export function createElement(Cls, attributes, ...children) {
+export function createElement (Cls, attributes, ...children) {
+    // console.log(arguments);
     let o;
-
+    
     if (typeof Cls === 'string') {
         o = new Wrapper(Cls);
     } else {
         o = new Cls({
-            timer: {},
+            timer: null
         });
     }
 
@@ -16,76 +16,84 @@ export function createElement(Cls, attributes, ...children) {
         o.setAttribute(name, attributes[name]);
     }
 
-    let visit = children => {
+    // console.log(children);
+    let visit = (children) => {
         for (let child of children) {
-            if (typeof child === 'object' && child instanceof Array) {
+            
+            if (child instanceof Array) {
                 visit(child);
                 continue;
             }
 
-            if (typeof child === 'string')
+            if (typeof child === 'string') {
                 child = new Text(child);
+            }
 
             o.appendChild(child);
         }
     }
-
+    
     visit(children);
-    // console.log(o);
+
     return o;
 }
 
 export class Text {
-    constructor(text) {
-        this.children = [];
+    constructor (text) {
         this.root = document.createTextNode(text);
     }
-    mountTo(parent) {
+
+    mountTo (parent) {
         parent.appendChild(this.root);
     }
 }
 
 export class Wrapper {
-    constructor(type) {
+    constructor (type) {  // config
+        // console.log('Parent::config', config);
         this.children = [];
         this.root = document.createElement(type);
     }
 
-    setAttribute(name, value) {
-        //attribute
-        this.root.setAttribute(name, value);
-        
-        if (name.match(/^on([\s\S]+)$/)) {
-            // console.log(RegExp.$1);
-            const eventName = RegExp.$1.replace(/^[\s\S]/, c => c.toLowerCase());
-            // console.log(eventName);
+    // set className (v) { // property
+    //     console.log('Parent::className', v);
+    // }
 
-            let func = _.debounce(value, 50, true);
-            this.addEventListener(eventName, func);
+    setAttribute (name, value) {    // attribute
+        // console.log('Parent::setAttribute', name, value);
+        this.root.setAttribute(name, value);
+
+        if (name.match(/^on([\s\S]+)$/)) {
+            let eventName = RegExp.$1.replace(/^[\s\S]/, c => c.toLowerCase());
+            console.log(eventName);
+            this.addEventListener(eventName, value)
         }
 
-        if (name = 'enableGesture') {
+        if (name === 'enableGesture') {
             enableGesture(this.root);
         }
     }
 
-    appendChild(child) {
+    appendChild (child) {   // children
+        // console.log('Parent::appendChild', child);
         this.children.push(child);
+        // child.mountTo(this.root);    // 这里不要直接 moute
     }
 
-    addEventListener() {
+    addEventListener () {
         this.root.addEventListener(...arguments);
     }
 
-    get style() {
+    get style () {
         return this.root.style;
     }
 
-    mountTo(parent) {
+    mountTo (parent) {
         parent.appendChild(this.root);
-
         for (let child of this.children) {
-            // console.log('child', child);
+            if (typeof child === 'string') {
+                child = new Text(child);
+            }
             child.mountTo(this.root);
         }
     }
