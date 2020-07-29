@@ -56,6 +56,6 @@ let component = <Carousel data={[
 	'https://static001.geekbang.org/resource/image/73/e4/730ea9c393def7975deceb48b3eb6fe4.jpg',
 ]} />
 
-component.mountTo(document.getElementById('container'));
+component.mountTo(document.body);
 
 

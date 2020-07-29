@@ -25,7 +25,6 @@ export class Carousel {
     let nextPicStopHandler = null;
 
     let position = 0;
-    let panendDx = null;
 
     let children = this.data.map((url, currentPosition) => {
       const length = this.data.length;
@@ -64,11 +63,7 @@ export class Carousel {
         
         let direction = 0;
         let dx = event.clientX - event.startX;
-        console.log('panend event', dx, panendDx, event);
-
-        if (panendDx === null) panendDx = dx;
-
-        if (panendDx !== null && dx === panendDx ) return;
+        console.log('panend event', dx, event);
 
         if (dx + offset > 250) {
           direction = 1;
@@ -119,10 +114,10 @@ export class Carousel {
         timeLine.add(lastAnimation);
         timeLine.add(currentAnimation);
         timeLine.add(nextAnimation);
-        // timeLine.reset();
 
         const length = this.data.length;
         position = (position - direction + length) % length;
+        //FIXME:触发了多次panend事件，调用多次nextPic函数，由于Position是全局变量，导致动画错误
         // nextPicStopHandler = setTimeout(nextPic, 8000);
       }
 
@@ -169,9 +164,9 @@ export class Carousel {
 			timeLine.add(nextAnimation);
 
 			position = nextPosition;
-			nextPicStopHandler = setTimeout(nextPic, 8000);
+			nextPicStopHandler = setTimeout(nextPic, 3000);
 		};
-		nextPicStopHandler = setTimeout(nextPic, 8000);
+		nextPicStopHandler = setTimeout(nextPic, 3000);
 
 		// root.addEventListener('mousedown', (event) => {
 		// 	let startX = event.clientX;
