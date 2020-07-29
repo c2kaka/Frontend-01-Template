@@ -57,7 +57,7 @@ export class Wrapper {
         if (name.match(/^on([\s\S]+)$/)) {
             // console.log(RegExp.$1);
             const eventName = RegExp.$1.replace(/^[\s\S]/, c => c.toLowerCase());
-            console.log(eventName);
+            // console.log(eventName);
             this.addEventListener(eventName, value);
         }
 

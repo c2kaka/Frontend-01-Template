@@ -141,6 +141,7 @@ function enableGesture(element) {
         isFlick
       });
       element.dispatchEvent(e);
+      console.log('panend');
     }
 
     if (context.isPress) {

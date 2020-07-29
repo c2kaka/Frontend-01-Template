@@ -25,6 +25,7 @@ export class Carousel {
     let nextPicStopHandler = null;
 
     let position = 0;
+    let panendDx = null;
 
     let children = this.data.map((url, currentPosition) => {
       const length = this.data.length;
@@ -45,18 +46,87 @@ export class Carousel {
         let lastElement = children[lastPosition];
         let currentElement = children[currentPosition];
         let nextElement = children[nextPosition];
-        let currentTransformValue = -500 * currentPosition + offset;
-        let lastTransformValue = -500 - 500 * lastPosition + offset;
-        let nextTransformValue = 500 - 500 * nextPosition + offset;
 
         let dx = event.clientX - event.startX;
 
-        currentElement.style.transform = `translateX(${currentTransformValue + dx}px)`;
-        lastElement.style.transform = `translateX(${lastTransformValue + dx}px)`;
-        nextElement.style.transform = `translateX(${nextTransformValue + dx}px)`
+        let currentTransformValue = - 500 * currentPosition + offset + dx;
+        let lastTransformValue = -500 - 500 * lastPosition + offset + dx;
+        let nextTransformValue = 500 - 500 * nextPosition + offset + dx;
+
+       
+
+        currentElement.style.transform = `translateX(${currentTransformValue}px)`;
+        lastElement.style.transform = `translateX(${lastTransformValue}px)`;
+        nextElement.style.transform = `translateX(${nextTransformValue}px)`
       }
 
-      let element = <img src={url} onStart={onStart} onPan={onPan} enableGesture={true}/>;
+      let onPanend = event => {
+        
+        let direction = 0;
+        let dx = event.clientX - event.startX;
+        console.log('panend event', dx, panendDx, event);
+
+        if (panendDx === null) panendDx = dx;
+
+        if (panendDx !== null && dx === panendDx ) return;
+
+        if (dx + offset > 250) {
+          direction = 1;
+        } else if (dx + offset < -250) {
+          direction = -1;
+        }
+
+        timeLine.reset();
+        timeLine.start();
+
+        let lastElement = children[lastPosition];
+        let currentElement = children[currentPosition];
+        let nextElement = children[nextPosition];
+
+        let lastAnimation = new Animation({
+          object: lastElement.style,
+          property: 'transform',
+          start: - 500 - 500 * lastPosition + offset + dx,
+          end: - 500 - 500 * lastPosition + direction * 500,
+          duration: 500,
+          delay: 0,
+          timingFunction: ease,
+          template: v => `translateX(${v}px)`,
+        });
+
+        let currentAnimation = new Animation({
+          object: currentElement.style,
+          property: 'transform',
+          start: - 500 * currentPosition + offset + dx,
+          end: - 500 * currentPosition + direction * 500,
+          duration: 500,
+          delay: 0,
+          timingFunction: ease,
+          template: v => `translateX(${v}px)`,
+        });
+  
+        let nextAnimation = new Animation({
+          object: nextElement.style,
+          property: 'transform',
+          start: 500 - 500 * nextPosition + offset + dx,
+          end: 500 - 500 * nextPosition + direction * 500,
+          duration: 500,
+          delay: 0,
+          timingFunction: ease,
+          template: v => `translateX(${v}px)`,
+        });
+
+        timeLine.add(lastAnimation);
+        timeLine.add(currentAnimation);
+        timeLine.add(nextAnimation);
+        // timeLine.reset();
+
+        const length = this.data.length;
+        position = (position - direction + length) % length;
+        // nextPicStopHandler = setTimeout(nextPic, 8000);
+      }
+
+      let element = <img src={url} onStart={onStart} onPan={onPan} onPanend={onPanend} enableGesture={true}/>;
       element.style.transform = 'translateX(0px)';
 			element.addEventListener("dragstart", event => event.preventDefault());
 			return element;
@@ -67,6 +137,7 @@ export class Carousel {
 		</div>
 
 		let nextPic = () => {
+      // console.log(timeLine.animations);
 			let nextPosition = (position + 1) % this.data.length;
 
 			let current = children[position];
@@ -98,9 +169,9 @@ export class Carousel {
 			timeLine.add(nextAnimation);
 
 			position = nextPosition;
-			nextPicStopHandler = setTimeout(nextPic, 3000);
+			nextPicStopHandler = setTimeout(nextPic, 8000);
 		};
-		nextPicStopHandler = setTimeout(nextPic, 3000);
+		nextPicStopHandler = setTimeout(nextPic, 8000);
 
 		// root.addEventListener('mousedown', (event) => {
 		// 	let startX = event.clientX;

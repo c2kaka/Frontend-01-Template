@@ -3,7 +3,7 @@ export function enableGesture(element) {
 
   let MOUSE_SYMBOL = Symbol('mouse');
 
-  if (element.ontouchstart !== null) {
+  if (document.ontouchstart !== null) {
     element.addEventListener('mousedown', e => {
       contexts[MOUSE_SYMBOL] = Object.create(null);
       start(e, contexts[MOUSE_SYMBOL]);
@@ -132,7 +132,7 @@ export function enableGesture(element) {
         element.dispatchEvent(e);
       }
 
-      let e = new CustomEvent('paned');
+      let e = new CustomEvent('panend');
       Object.assign(e, {
         startX: context.startX,
         startY: context.startY,
