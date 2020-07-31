@@ -63,11 +63,11 @@ export class Carousel {
         
         let direction = 0;
         let dx = event.clientX - event.startX;
-        console.log('panend event', dx, event);
+        console.log('flick', event.isFlick);
 
-        if (dx + offset > 250) {
+        if (dx + offset > 250 || (dx > 0 && event.isFlick)) {
           direction = 1;
-        } else if (dx + offset < -250) {
+        } else if (dx + offset < -250 || (dx < 0 && event.isFlick)) {
           direction = -1;
         }
 
