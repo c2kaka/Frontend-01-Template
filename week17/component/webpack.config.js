@@ -17,6 +17,13 @@ module.exports = {
 					},
 				},
 			},
+
+			{
+				test: /\.css$/,
+				use: {
+					loader: require.resolve('./cssloader.js')
+				}
+			}
 		],
 	},
 	mode: 'development',
