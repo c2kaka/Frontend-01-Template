@@ -5,7 +5,7 @@ const fs = require('fs');
 /* GET home page. */
 router.get('/', function(req, res, next) {
   // res.render('index', { title: 'Express' });
-  fs.writeFileSync('../server/public/1.html', 'hello world!');
+  fs.writeFileSync(`../server/public/${req.query.filename}`, 'hello world!');
 });
 
 module.exports = router;
