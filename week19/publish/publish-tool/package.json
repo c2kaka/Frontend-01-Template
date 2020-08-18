@@ -11,5 +11,8 @@
   "license": "ISC",
   "devDependencies": {
     "querystring": "^0.2.0"
+  },
+  "dependencies": {
+    "archiver": "^5.0.0"
   }
 }
