@@ -8,25 +8,55 @@ const server = http.createServer((req, res) => {
 		return auth(req, res);
     }
     
-    if (!req.url.match(/^\/$/)) {
+    if (req.url.match(/^\/favicon.ico/)) {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
-		res.end('not found');
+        res.end('not found');
+        return;
     }
 
-	let matched = req.url.match(/filename=([^&]+)/);
+    let matched = req.url.match(/filename=([^&]+)/);
+    console.log('matched', matched);
 	let fileName = matched && matched[1];
-	// if (!fileName) return;
 
-	// let writeStream = fs.createWriteStream('../server/public/' + fileName);
 	if (fileName) {
-		let writeStream = unzip.Extract({ path: '../server/public' });
-		req.pipe(writeStream);
-	}
+        console.log('req.headers.token', req.headers.token);
+        const options = {
+            hostname: 'api.github.com',
+            port: 443,
+            path: `/user`,
+            method: 'GET',
+            headers: {
+                Authorization: 'token ' + req.headers.token,
+                'User-Agent': 'toy-publish-server'
+            }
+        };
 
-	req.on('end', () => {
-		res.writeHead(200, { 'Content-Type': 'text/plain' });
-		res.end('okay');
-	});
+        const request = https.request(options, response => {
+            let body = '';
+            response.on('data', d => {
+                body += d.toString();
+            });
+
+            response.on('end', () => {
+                let user = JSON.parse(body);
+                console.log(user);
+                // 权限检查
+                let writeStream = unzip.Extract({ path: '../server/public' });
+                req.pipe(writeStream);
+
+                req.on('end', () => {
+                    res.writeHead(200, { 'Content-Type': 'text/plain' });
+                    res.end('okay');
+                });
+            })
+        })
+
+        request.on('error', (e) => {
+            console.error(e);
+        });
+
+        request.end();
+	}
 });
 
 function auth(req, res) {
@@ -52,13 +82,14 @@ function auth(req, res) {
 		response.on('data', (d) => {
 			console.log('d.toString', d.toString());
             let result = d.toString().match(/access_token=([^&]+)/);
-            if(result) {
+            if(result) { // 获取到token后转发给client
                 let token = result[1];
                 res.writeHead(200, {
+                    'Set-Cookie': token,
                     'access_token': token,
-                    'Content-Type': 'text/plain'
+                    'Content-Type': 'text/html'
                 });
-                res.end('okay');
+                res.end(`<a href="http://localhost:8080/publish?token=${token}">publish</a>`);
             } else {
                 res.writeHead(200, {
                     'Content-Type': 'text/plain'
