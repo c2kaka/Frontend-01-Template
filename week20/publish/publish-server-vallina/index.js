@@ -6,7 +6,12 @@ const https = require('https');
 const server = http.createServer((req, res) => {
 	if (req.url.match(/^\/auth/)) {
 		return auth(req, res);
-	}
+    }
+    
+    if (!req.url.match(/^\/$/)) {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+		res.end('not found');
+    }
 
 	let matched = req.url.match(/filename=([^&]+)/);
 	let fileName = matched && matched[1];
@@ -47,12 +52,19 @@ function auth(req, res) {
 		response.on('data', (d) => {
 			console.log('d.toString', d.toString());
             let result = d.toString().match(/access_token=([^&]+)/);
-            let token = result[1];
-            res.writeHead(200, {
-                'access_token': token,
-                'Content-Type': 'text/plain'
-            });
-            res.end('okay');
+            if(result) {
+                let token = result[1];
+                res.writeHead(200, {
+                    'access_token': token,
+                    'Content-Type': 'text/plain'
+                });
+                res.end('okay');
+            } else {
+                res.writeHead(200, {
+                    'Content-Type': 'text/plain'
+                });
+                res.end('error');
+            }
 		});
 	});
 
